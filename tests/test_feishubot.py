@@ -46,10 +46,19 @@ class TestFeishu(unittest.TestCase):
     def test_send_card(self):
         feishu.bot.send_card("This is a test **message**.", "Test card")
 
-    def test_z_disable(self):
+    def test_disable(self):
+        app_id = os.environ.get("FEISHU_APP_ID", "")
         os.environ["FEISHU_APP_ID"] = ""
         with capture_logs(level="DEBUG") as logs:
             reload(feishu)
         self.assertFalse(feishu.ENABLE)
         self.assertFalse(dir(feishu.bot))
         self.assertTrue(any("feishu bot is unavailable" in log for log in logs))
+
+        os.environ["FEISHU_APP_ID"] = app_id
+        with capture_logs(level="DEBUG") as logs:
+            reload(feishu)
+        self.assertTrue(feishu.ENABLE)
+        self.assertTrue(dir(feishu.bot))
+        self.assertFalse(any("feishu bot is unavailable" in log for log in logs))
+ 
