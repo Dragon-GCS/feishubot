@@ -1,23 +1,33 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = ["setuptools"]
+build-backend = 'setuptools.build_meta'
+requires = ['setuptools']
 
 [project]
-name = "feishubot2"
-version = "0.0.1"
-description = "Send message to you by feishu bot."
-readme = "README.md"
-requires-python = ">=3.6"
-classifiers = ["License :: OSI Approved :: MIT License", "Operating System :: OS Independent", "Programming Language :: Python :: 3", "Topic :: Communications"]
-dependencies = ["cv2", "loguru", "requests", "requests_toolbelt"]
+name = 'feishubot2'
+version = '0.0.2'
+description = 'Send message to you by feishu bot.'
+readme = 'README.md'
+requires-python = '>=3.6'
+classifiers = [
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'Topic :: Communications',
+]
+dependencies = [
+    'loguru',
+    'requests',
+    'requests_toolbelt',
+]
 
 [[project.authors]]
-name = "Dragon-GCS"
-email = "878173121@qq.com"
+name = 'Dragon-GCS'
+email = '878173121@qq.com'
 
 [project.urls]
-Homepage = "https://github.com/Dragon-GCS/feishubot"
-"Bug Tracker" = "https://github.com/Dragon-GCS/feishubot/issues"
+Homepage = 'https://github.com/Dragon-GCS/feishubot'
+"Bug Tracker" = 'https://github.com/Dragon-GCS/feishubot/issues'
 
-[tool.start]
-dev-dependencies = []
+[project.optional-dependencies]
+dev=[]
+media = ['opencv-python']

@@ -2,6 +2,18 @@
 
 Send message to you by feishu bot
 
+## Install
+
+```bash
+pip install feishubot2
+```
+
+If you need send image, you need install with `media` option
+
+```bash
+pip install feishubot2[media]
+```
+
 ## Usage
 
 1. Set environment FEISHU_APP_ID and FEISHU_APP_SECRET to use feishu api

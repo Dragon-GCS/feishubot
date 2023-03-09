@@ -12,7 +12,11 @@ from datetime import datetime, timedelta
 from io import BufferedReader
 from typing import Any, Literal, TypeAlias
 
-import cv2
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+
 import requests
 from loguru import logger
 from requests_toolbelt import MultipartEncoder
@@ -53,7 +57,7 @@ def _post(url: str, token: str = "", **kwargs) -> dict:
         kwargs["headers"]["authorization"] = f"Bearer {token}"
     resp = requests.post(url, **kwargs).json()
     if resp["code"]:
-        raise Exception(f"Message failed: {resp['msg']}")
+        raise ValueError(f"Message failed: {resp['msg']}")
     return resp
 
 
@@ -72,7 +76,7 @@ def get_open_id(token: str) -> str:
     for user in resp["data"]["user_list"]:
         if "user_id" in user:
             return user["user_id"]
-    raise Exception(f"Query open_id failed: no user_id found. {body=}")
+    raise ValueError(f"Query open_id failed: no user_id found. {body=}")
 
 
 class TenantToken:
@@ -114,7 +118,7 @@ class FeiShuBot:
         if __name == "token":
             return ""
 
-        def wrap(*args, **kwargs):
+        def wrap(*_, **__):
             logger.warning(f"FeiShuBot is disabled, {__name} is unavailable.")
 
         return wrap
@@ -195,6 +199,9 @@ class FeiShuBot:
             cover(FileStream | bytes): cover for media, default is first frame of media
             filename(str): filename of the audio, default is empty
         """
+        if cv2 is None:
+            logger.warning("opencv-python is not installed, send_media is unavailable")
+            return {}
         if not cover:
             if not isinstance(media, BufferedReader):
                 raise ValueError("Cover must be set when media is not an opened file")
@@ -219,7 +226,13 @@ class FeiShuBot:
             "elements": [{"tag": "markdown", "content": message}],
         }
         if header:
-            content["header"] = {"title": {"tag": "plain_text", "content": header}, "template": "blue"}
+            content["header"] = {
+                "title": {
+                    "tag": "plain_text",
+                    "content": header
+                },
+                "template": "blue"
+            }
         self._send_message("interactive", content)
 
 
