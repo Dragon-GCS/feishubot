@@ -16,8 +16,8 @@ pip install feishubot2[media]
 
 ## Usage
 
-1. Set environment FEISHU_APP_ID and FEISHU_APP_SECRET to use feishu api
-2. set FEISHU_PHONE or FEISHU_EMAIL or FEISHU_OPEN_ID for sending message to you
+1. Set environment `FEISHU_APP_ID` and `FEISHU_APP_SECRET` to use feishu api
+2. set FEISHU_PHONE or `FEISHU_EMAIL` or `FEISHU_OPEN_ID` for sending message to you
 
 > when environment was not set correctly, bot will be disable
 
