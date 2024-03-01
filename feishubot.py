@@ -12,8 +12,10 @@ from datetime import datetime, timedelta
 from io import BufferedReader
 from typing import Any, Literal, TypeAlias
 
+os.environ["LOGURU_FORMAT"] = "<level>{level: <8} :{message}</level>"
+
 try:
-    import cv2
+    import cv2  # type: ignore
 except ImportError:
     cv2 = None
 
@@ -35,13 +37,19 @@ FEISHU_EMAIL = os.getenv("FEISHU_EMAIL")
 # open_id of user who will receive the message
 FEISHU_OPEN_ID = os.getenv("FEISHU_OPEN_ID")
 
-ENABLE = True if all(
-    (FEISHU_APP_ID, FEISHU_APP_SECRET, any((FEISHU_OPEN_ID, FEISHU_PHONE, FEISHU_EMAIL)))
-) else False
+ENABLE = all(
+    (
+        FEISHU_APP_ID,
+        FEISHU_APP_SECRET,
+        any((FEISHU_OPEN_ID, FEISHU_PHONE, FEISHU_EMAIL)),
+    )
+)
 
 if not ENABLE:
     logger.warning(
-        f"{FEISHU_APP_ID=} or {FEISHU_APP_SECRET=} is not set, feishu bot is unavailable."
+        f"{FEISHU_APP_ID=} or {FEISHU_APP_SECRET=} or any ("
+        f"FEISHU_OPEN_ID, FEISHU_PHONE, FEISHU_EMAIL) "
+        f"is not set, feishu bot is unavailable."
     )
 
 FileStream: TypeAlias = BufferedReader | bytes | bytearray
@@ -86,10 +94,7 @@ class TenantToken:
 
     def request_token(self):
         resp = _post(
-            TENANT_TOKEN_API, json={
-                "app_id": FEISHU_APP_ID,
-                "app_secret": FEISHU_APP_SECRET
-            }
+            TENANT_TOKEN_API, json={"app_id": FEISHU_APP_ID, "app_secret": FEISHU_APP_SECRET}
         )
         self.token = resp["tenant_access_token"]
         self.expire_at = timedelta(seconds=resp["expire"]) + datetime.now()
@@ -132,8 +137,8 @@ class FeiShuBot:
             json={
                 "receive_id": self.user_id,
                 "msg_type": msg_type,
-                "content": json.dumps(content)
-            }
+                "content": json.dumps(content),
+            },
         )
 
     def _post_file(
@@ -180,7 +185,7 @@ class FeiShuBot:
         return self._send_message("file", self._post_file(file_type, file, filename))
 
     def send_audio(self, audio: FileStream) -> dict:
-        """Send audio message, audio must be opus format. For other audio type, 
+        """Send audio message, audio must be opus format. For other audio type,
         refer to the following command to convert:
 
         `ffmpeg -i SourceFile.mp3 -acodec libopus -ac 1 -ar 16000 TargetFile.opus`
@@ -229,9 +234,9 @@ class FeiShuBot:
             content["header"] = {
                 "title": {
                     "tag": "plain_text",
-                    "content": header
+                    "content": header,
                 },
-                "template": "blue"
+                "template": "blue",
             }
         self._send_message("interactive", content)
 

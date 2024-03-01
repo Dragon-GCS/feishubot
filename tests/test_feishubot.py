@@ -61,4 +61,3 @@ class TestFeishu(unittest.TestCase):
         self.assertTrue(feishu.ENABLE)
         self.assertTrue(dir(feishu.bot))
         self.assertFalse(any("feishu bot is unavailable" in log for log in logs))
- 
